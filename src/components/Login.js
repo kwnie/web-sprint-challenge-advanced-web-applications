@@ -26,7 +26,12 @@ const Login = () => {
     e.preventDefault();
     axios.post('http://localhost:5000/api/login', credentials)
       .then(res => {
-        localStorage.setItem('authToken', res.data.payload);
+        if(credentials.username !== 'Lambda School' 
+        && credentials.password !== 'i<3Lambd4'){
+          console.log('Username or Password not valid')
+        } else {
+          localStorage.setItem('authToken', res.data.payload);
+        }
       })
       .catch(err => console.log(err));
       push('/protected')

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosWithAuth from "../helpers/axiosWithAuth";
 import EditMenu from './EditMenu';
 import { useParams } from "react-router-dom";
 
@@ -21,17 +21,25 @@ const ColorList = ({ colors, updateColors }) => {
 
   const saveEdit = e => {
     e.preventDefault();
-    axios.put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
-      .then(res => updateColors(res.data))
+    axiosWithAuth().put(`http://localhost:5000/api/colors/${colorToEdit.id}`, colorToEdit)
+      .then(res => 
+        updateColors(colors.map(item => {
+          if(item.id === res.data.id) {
+            return res.data
+          } else {
+            return item
+          }
+        }))
+        )
       .catch(err => console.log(err))
   };
 
   const deleteColor = color => {
-    console.log(color)
-    axios.delete(`http://localhost:5000/api/colors/${color.id}`)
+    axiosWithAuth().delete(`http://localhost:5000/api/colors/${color.id}`)
       .then(res => {
-        updateColors(colors.filter(color => {
-          return color.id !== colorToEdit.id
+        console.log(res)
+        updateColors(colors.filter(item => {
+          return item.id !== color.id
         }))
       })
       .catch(err => console.log(err))
